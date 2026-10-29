@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMER ZONE PRO 2.0</title>
+
+<style>
+:root {
+  --bg: #070b14;
+  --card: #111a2b;
+  --text: #ffffff;
+  --muted: #b5c2d8;
+  --accent: #00f5ff;
+  --border: #28364c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  transition: background .25s, color .25s;
+}
+
+body.light {
+  --bg: #edf2fa;
+  --card: #ffffff;
+  --text: #142033;
+  --muted: #596579;
+  --border: #d3dceb;
+}
+
+header {
+  padding: 25px 12px;
+  text-align: center;
+  background: linear-gradient(130deg, #111b36, #261039);
+  border-bottom: 2px solid var(--accent);
+}
+
+.logo {
+  font-size: clamp(25px, 5vw, 38px);
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 15px var(--accent);
+}
+
+header p { color: #c3cde0; }
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 8px;
+}
+
+button, input, select {
+  font: inherit;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 11px 13px;
+}
+
+button {
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.primary {
+  background: var(--accent);
+  color: #061018;
+  font-weight: bold;
+}
+
+input, select {
+  background: var(--bg);
+  color: var(--text);
+  max-width: 100%;
+}
+
+.container {
+  width: min(1100px, 94%);
+  margin: auto;
+}
+
+.hero {
+  text-align: center;
+  padding: 25px 5px;
+}
+
+.hero h1 { font-size: clamp(28px, 5vw, 44px); }
+.hero h1 span { color: var(--accent); }
+
+.search {
+  width: min(500px, 100%);
+  margin: 18px auto;
+}
+
+.search input { width: 100%; }
+
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.section-title { color: var(--accent); }
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  padding-bottom: 30px;
+}
+
+.game-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 18px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  transition: .2s;
+}
+
+.game-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+.game-icon { font-size: 52px; }
+.game-card p { color: var(--muted); min-height: 35px; }
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panel, .play-panel {
+  background: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 20px;
+  margin: 22px auto;
+}
+
+.panel input, .panel select {
+  display: block;
+  width: 100%;
+  margin: 8px 0 15px;
+}
+
+.hidden { display: none !important; }
+
+#gameArea {
+  text-align: center;
+  padding: 10px 0;
+  min-height: 180px;
+}
+
+.big-number {
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--accent);
+  margin: 15px;
+}
+
+.game-message {
+  min-height: 28px;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.game-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.ttt-board {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  justify-content: center;
+  gap: 6px;
+  margin: 20px auto;
+}
+
+.ttt-cell {
+  height: 80px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.memory-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(45px, 75px));
+  justify-content: center;
+  gap: 7px;
+  margin: 20px auto;
+}
+
+.memory-cell {
+  height: 65px;
+  padding: 4px;
+  font-size: 25px;
+}
+
+#snakeCanvas {
+  width: min(100%, 360px);
+  height: auto;
+  background: #03070b;
+  border: 2px solid var(--accent);
+}
+
+footer {
+  text-align: center;
+  padding: 25px 10px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+footer a { color: var(--accent); }
+
+@media(max-width: 420px) {
+  nav button { padding: 9px; font-size: 13px; }
+  .ttt-board { grid-template-columns: repeat(3, 70px); }
+  .ttt-cell { height: 70px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🎮 GAMER ZONE PRO</div>
+  <p>PLAY • COMPETE • HAVE FUN</p>
+</header>
+
+<nav>
+  <button onclick="showHome()">🏠 Home</button>
+  <button onclick="showFavorites()">❤️ Favorites</button>
+  <button onclick="toggleSettings()">⚙️ Settings</button>
+  <button class="primary" onclick="adminAction()">🔐 Admin Login</button>
+</nav>
+
+<main class="container">
+
+  <section class="hero">
+    <h1>WELCOME TO <span>GAMER ZONE</span></h1>
+    <p>Discover games. Challenge yourself. Have fun!</p>
+
+    <div class="search">
+      <input id="searchInput" placeholder="🔍 Search games..."
+             oninput="renderGames()">
+    </div>
+
+    <div class="filters">
+      <button onclick="setCategory('All')">All</button>
+      <button onclick="setCategory('Arcade')">Arcade</button>
+      <button onclick="setCategory('Puzzle')">Puzzle</button>
+      <button onclick="setCategory('Action')">Action</button>
+      <button onclick="setCategory('Other')">Other</button>
+    </div>
+  </section>
+
+  <section id="settingsPanel" class="panel hidden">
+    <h2>⚙️ Settings</h2>
+
+    <label>Theme</label>
+    <select id="themeSelect" onchange="changeTheme(this.value)">
+      <option value="dark">Dark Mode</option>
+      <option value="light">Light Mode</option>
+    </select>
+
+    <label>Accent Color</label>
+    <input type="color" id="accentPicker" value="#00f5ff"
+           onchange="changeAccent(this.value)">
+
+    <button onclick="toggleSettings()">Close</button>
+  </section>
+
+  <section id="adminPanel" class="panel hidden">
+    <h2>🔐 Admin Dashboard</h2>
+    <p>Add external game links to your library.</p>
+
+    <form id="addGameForm">
+      <label>Game Name</label>
+      <input id="gameName" maxlength="60" required
+             placeholder="Example: My New Game">
+
+      <label>Game Icon</label>
+      <input id="gameIcon" maxlength="10" placeholder="🎮">
+
+      <label>Category</label>
+      <select id="gameCategory">
+        <option>Arcade</option>
+        <option>Puzzle</option>
+        <option>Action</option>
+        <option>Other</option>
+      </select>
+
+      <label>Description</label>
+      <input id="gameDescription" maxlength="120" required
+             placeholder="Describe your game">
+
+      <label>Game Type</label>
+      <select id="gameType" onchange="toggleUrlField()">
+        <option value="snake">Snake</option>
+        <option value="ttt">Tic-Tac-Toe</option>
+        <option value="rps">Rock Paper Scissors</option>
+        <option value="memory">Memory Match</option>
+        <option value="guess">Number Guessing</option>
+        <option value="clicker">Click Challenge</option>
+        <option value="reaction">Reaction Test</option>
+        <option value="url">External Game Website</option>
+      </select>
+
+      <div id="urlField" class="hidden">
+        <label>External Game URL (HTTPS)</label>
+        <input id="gameUrl" type="url"
+               placeholder="https://example.com">
+      </div>
+
+      <button type="submit" class="primary">➕ Add Game</button>
+      <button type="button" onclick="logoutAdmin()">Logout</button>
+    </form>
+
+    <p id="adminMessage" class="game-message"></p>
+  </section>
+
+  <h2 class="section-title">🔥 Game Library</h2>
+  <div id="gameList" class="games"></div>
+
+  <section id="playPanel" class="play-panel hidden">
+    <h2 id="playingTitle">Now Playing</h2>
+    <div id="gameArea"></div>
+    <button onclick="closeGame()">⬅ Back to Games</button>
+  </section>
+
+</main>
+
+<footer>
+  <p>🎮 GAMER ZONE PRO</p>
+  <p>Made for gamers ❤️</p>
+</footer>
+
+<script>
+"use strict";
+
+/*
+  DEMO LOGIN ONLY.
+  This password is visible in client-side JavaScript.
+  Do not use this method as real security on a public website.
+*/
+const ADMIN_PASSWORD = "sayon123@#";
+
+const defaultGames = [
+  {id:"snake", name:"Snake Game", icon:"🐍",
+   category:"Arcade", description:"Eat food and grow your snake.",
+   type:"snake"},
+
+  {id:"ttt", name:"Tic-Tac-Toe", icon:"❌",
+   category:"Puzzle", description:"Play X and O against a friend.",
+   type:"ttt"},
+
+  {id:"rps", name:"Rock Paper Scissors", icon:"✊",
+   category:"Arcade", description:"Can you beat the computer?",
+   type:"rps"},
+
+  {id:"memory", name:"Memory Match", icon:"🧠",
+   category:"Puzzle", description:"Find all matching pairs.",
+   type:"memory"},
+
+  {id:"guess", name:"Number Guess", icon:"🔢",
+   category:"Puzzle", description:"Guess the secret number.",
+   type:"guess"},
+
+  {id:"clicker", name:"Click Challenge", icon:"👆",
+   category:"Arcade", description:"Click as many times as possible.",
+   type:"clicker"},
+
+  {id:"reaction", name:"Reaction Test", icon:"⚡",
+   category:"Action", description:"Test your reaction speed.",
+   type:"reaction"}
+];
+
+function loadGames() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("gamerGames"));
+    if (Array.isArray(stored)) {
+      const custom = stored.filter(g =>
+        g && typeof g.id === "string" &&
+        typeof g.name === "string" &&
+        typeof g.type === "string"
+      );
+      return [...defaultGames, ...custom.filter(
+        g => !defaultGames.some(d => d.id === g.id)
+      )];
+    }
+  } catch (e) {}
+  return [...defaultGames];
+}
+
+let games = loadGames();
+let category = "All";
+let adminLoggedIn = false;
+let favorites = new Set();
+
+try {
+  favorites = new Set(
+    JSON.parse(localStorage.getItem("gamerFavorites") || "[]")
+  );
+} catch(e) {}
+
+let activeCleanup = null;
+let favoriteOnly = false;
+
+function saveCustomGames() {
+  const custom = games.filter(g =>
+    !defaultGames.some(d => d.id === g.id)
+  );
+  localStorage.setItem("gamerGames", JSON.stringify(custom));
+}
+
+function renderGames() {
+  const query = document.getElementById("searchInput")
+    .value.trim().toLowerCase();
+
+  const list = document.getElementById("gameList");
+  list.replaceChildren();
+
+  const filtered = games.filter(g => {
+    const searchMatch =
+      g.name.toLowerCase().includes(query) ||
+      g.description.toLowerCase().includes(query);
+
+    const categoryMatch =
+      category === "All" || g.category === category;
+
+    const favoriteMatch =
+      !favoriteOnly || favorites.has(g.id);
+
+    return searchMatch && categoryMatch && favoriteMatch;
+  });
+
+  if (!filtered.length) {
+    const p = document.createElement("p");
+    p.textContent = "No games found!";
+    list.appendChild(p);
+    return;
+  }
+
+  filtered.forEach(game => {
+    const card = document.createElement("article");
+    card.className = "game-card";
+
+    const icon = document.createElement("div");
+    icon.className = "game-icon";
+    icon.textContent = game.icon || "🎮";
+
+    const title = document.createElement("h3");
+    title.textContent = game.name;
+
+    const desc = document.createElement("p");
+    desc.textContent = game.description;
+
+    const cat = document.createElement("small");
+    cat.textContent = game.category;
+
+    const actions = document.createElement("div");
+    actions.className = "card-actions";
+
+    const play = document.createElement("button");
+    play.className = "primary";
+    play.textContent = "▶ Play";
+    play.onclick = () => playGame(game.id);
+
+    const fav = document.createElement("button");
+    fav.textContent = favorites.has(game.id) ? "❤️" : "🤍";
+    fav.onclick = () => toggleFavorite(game.id);
+
+    actions.append(play, fav);
+    card.append(icon, title, desc, cat, actions);
+
+    if (adminLoggedIn &&
+        !defaultGames.some(g => g.id === game.id)) {
+      const del = document.createElement("button");
+      del.textContent = "🗑️ Delete";
+      del.style.marginTop = "12px";
+      del.onclick = () => deleteGame(game.id);
+      card.appendChild(del);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+function setCategory(value) {
+  category = value;
+  favoriteOnly = false;
+  renderGames();
+}
+
+function showHome() {
+  category = "All";
+  favoriteOnly = false;
+  document.getElementById("searchInput").value = "";
+  document.getElementById("playPanel").classList.add("hidden");
+  document.getElementById("settingsPanel").classList.add("hidden");
+  renderGames();
+}
+
+function showFavorites() {
+  category = "All";
+  favoriteOnly = true;
+  document.getElementById("searchInput").value = "";
+  document.getElementById("playPanel").classList.add("hidden");
+  renderGames();
+}
+
+function toggleFavorite(id) {
+  if (favorites.has(id)) favorites.delete(id);
+  else favorites.add(id);
+
+  localStorage.setItem(
+    "gamerFavorites", JSON.stringify([...favorites])
+  );
+  renderGames();
+}
+
+function toggleSettings() {
+  document.getElementById("settingsPanel").classList.toggle("hidden");
+}
+
+function changeTheme(value) {
+  document.body.classList.toggle("light", value === "light");
+  localStorage.setItem("gamerTheme", value);
+}
+
+function changeAccent(value) {
+  document.documentElement.style.setProperty("--accent", value);
+  localStorage.setItem("gamerAccent", value);
+}
+
+function toggleUrlField() {
+  const isUrl = document.getElementById("gameType").value === "url";
+  document.getElementById("urlField").classList.toggle("hidden", !isUrl);
+  document.getElementById("gameUrl").required = isUrl;
+}
+
+function adminAction() {
+  if (adminLoggedIn) {
+    document.getElementById("adminPanel").classList.toggle("hidden");
+    return;
+  }
+
+  const password = prompt("Enter Admin Password:");
+
+  if (password === ADMIN_PASSWORD) {
+    adminLoggedIn = true;
+    document.getElementById("adminPanel").classList.remove("hidden");
+    document.getElementById("adminMessage").textContent =
+      "Admin demo mode enabled!";
+    renderGames();
+  } else if (password !== null) {
+    alert("Incorrect password!");
+  }
+}
+
+function logoutAdmin() {
+  adminLoggedIn = false;
+  document.getElementById("adminPanel").classList.add("hidden");
+  renderGames();
+}
+
+document.getElementById("addGameForm").addEventListener("submit", e => {
+  e.preventDefault();
+
+  if (!adminLoggedIn) {
+    alert("Admin login required!");
+    return;
+  }
+
+  const name = document.getElementById("gameName").value.trim();
+  const icon = document.getElementById("gameIcon").value.trim() || "🎮";
+  const gameCategory = document.getElementById("gameCategory").value;
+  const description =
+    document.getElementById("gameDescription").value.trim();
+  const type = document.getElementById("gameType").value;
+
+  let url = "";
+
+  if (type === "url") {
+    try {
+      const parsed = new URL(
+        document.getElementById("gameUrl").value.trim()
+      );
+      if (parsed.protocol !== "https:") throw new Error();
+      url = parsed.href;
+    } catch {
+      alert("Enter a valid HTTPS URL.");
+      return;
+    }
+  }
+
+  const game = {
+    id: "custom-" + Date.now(),
+    name, icon, category: gameCategory, description, type, url
+  };
+
+  games.push(game);
+  saveCustomGames();
+  e.target.reset();
+  toggleUrlField();
+  renderGames();
+
+  document.getElementById("adminMessage").textContent =
+    "Game added successfully!";
+});
+
+function deleteGame(id) {
+  if (!adminLoggedIn) return;
+  if (!confirm("Delete this game?")) return;
+
+  games = games.filter(g => g.id !== id);
+  favorites.delete(id);
+
+  localStorage.setItem("gamerFavorites", JSON.stringify([...favorites]));
+  saveCustomGames();
+  renderGames();
+}
+
+function stopCurrentGame() {
+  if (typeof activeCleanup === "function") {
+    activeCleanup();
+  }
+  activeCleanup = null;
+}
+
+function closeGame() {
+  stopCurrentGame();
+  document.getElementById("playPanel").classList.add("hidden");
+}
+
+function playGame(id) {
+  const game = games.find(g => g.id === id);
+  if (!game) return;
+
+  stopCurrentGame();
+
+  const panel = document.getElementById("playPanel");
+  const area = document.getElementById("gameArea");
+
+  document.getElementById("playingTitle").textContent =
+    "🎮 " + game.name;
+
+  area.replaceChildren();
+  panel.classList.remove("hidden");
+
+  if (game.type === "url") {
+    let parsed;
+    try {
+      parsed = new URL(game.url);
+      if (parsed.protocol !== "https:") throw new Error();
+    } catch {
+      area.textContent = "This game has an invalid URL.";
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.href = parsed.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Open Game Website ↗";
+    area.appendChild(link);
+
+    const note = document.createElement("p");
+    note.textContent =
+      "This game opens in a new tab. Some websites cannot be embedded.";
+    area.appendChild(note);
+  } else {
+    const gamesMap = {
+      snake: startSnake,
+      ttt: startTTT,
+      rps: startRPS,
+      memory: startMemory,
+      guess: startGuess,
+      clicker: startClicker,
+      reaction: startReaction
+    };
+
+    if (gamesMap[game.type]) gamesMap[game.type](area);
+    else area.textContent = "Unsupported game type.";
+  }
+
+  panel.scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+function element(tag, text, className) {
+  const el = document.createElement(tag);
+  if (text !== undefined) el.textContent = text;
+  if (className) el.className = className;
+  return el;
+}
+
+function message(area, text) {
+  const el = element("p", text, "game-message");
+  area.appendChild(el);
+  return el;
+}
+
+function gameButton(area, text, callback) {
+  const b = element("button", text);
+  b.onclick = callback;
+  area.appendChild(b);
+  return b;
+}
+
+/* 1. SNAKE */
+function startSnake(area) {
+  const canvas = element("canvas");
+  canvas.id = "snakeCanvas";
+  canvas.width = 320;
+  canvas.height = 320;
+  area.appendChild(canvas);
+
+  message(area, "Use Arrow Keys or WASD. On mobile, use the buttons.");
+
+  const controls = element("div", undefined, "game-buttons");
+  area.appendChild(controls);
+
+  const ctx = canvas.getContext("2d");
+  const size = 16;
+  let snake = [{x: 10, y: 10}];
+  let dx = 1, dy = 0;
+  let food = newFood();
+  let score = 0;
+  let running = true;
+  let lastDirection = {x: 1, y: 0};
+
+  function newFood() {
+    let f;
+    do {
+      f = {
+        x: Math.floor(Math.random() * 20),
+        y: Math.floor(Math.random() * 20)
+      };
+    } while (snake && snake.some(p => p.x === f.x && p.y === f.y));
+    return f;
+  }
+
+  function setDirection(x, y) {
+    if (x === -lastDirection.x && y === -lastDirection.y) return;
+    dx = x;
+    dy = y;
+  }
+
+  [
+    ["⬆️", 0, -1],
+    ["⬅️", -1, 0],
+    ["⬇️", 0, 1],
+    ["➡️", 1, 0]
+  ].forEach(([label, x, y]) => {
+    const b = element("button", label);
+    b.onclick = () => setDirection(x, y);
+    controls.appendChild(b);
+  });
+
+  const keyHandler = e => {
+    const k = e.key.toLowerCase();
+    if (["arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
+      e.preventDefault();
+    }
+    if (k === "arrowup" || k === "w") setDirection(0, -1);
+    if (k === "arrowdown" || k === "s") setDirection(0, 1);
+    if (k === "arrowleft" || k === "a") setDirection(-1, 0);
+    if (k === "arrowright" || k === "d") setDirection(1, 0);
+  };
+
+  document.addEventListener("keydown", keyHandler);
+  activeCleanup = () => {
+    running = false;
+    document.removeEventListener("keydown", keyHandler);
+    clearInterval(timer);
+  };
+
+  function tick() {
+    if (!running) return;
+
+    const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+    const eating = head.x === food.x && head.y === food.y;
+    const body = eating ? snake : snake.slice(0, -1);
+
+    if (head.x < 0 || head.x >= 20 ||
+        head.y < 0 || head.y >= 20 ||
+        body.some(p => p.x === head.x && p.y === head.y)) {
+      running = false;
+      clearInterval(timer);
+      status.textContent = "Game Over! Final score: " + score;
+      return;
+    }
+
+    snake.unshift(head);
+    lastDirection = {x: dx, y: dy};
+
+    if (eating) {
+      score++;
+      food = newFood();
+    } else {
+      snake.pop();
+    }
+
+    ctx.fillStyle = "#03070b";
+    ctx.fillRect(0, 0, 320, 320);
+
+    ctx.fillStyle = "#ff4358";
+    ctx.fillRect(food.x * size, food.y * size, size - 1, size - 1);
+
+    ctx.fillStyle = "#00f5ff";
+    snake.forEach(p =>
+      ctx.fillRect(p.x * size, p.y * size, size - 1, size - 1)
+    );
+
+    status.textContent = "Score: " + score;
+  }
+
+  const status = message(area, "Score: 0");
+  const timer = setInterval(tick, 130);
+}
+
+/* 2. TIC-TAC-TOE */
+function startTTT(area) {
+  const status = message(area, "X's turn");
+  const boardEl = element("div", undefined, "ttt-board");
+  area.appendChild(boardEl);
+
+  let board = Array(9).fill("");
+  let turn = "X";
+  let ended = false;
+
+  const cells = [];
+
+  function winner() {
+    const lines = [
+      [0,1,2], [3,4,5], [6,7,8],
+      [0,3,6], [1,4,7], [2,5,8],
+      [0,4,8], [2,4,6]
+    ];
+
+    for (const [a,b,c] of lines) {
+      if (board[a] && board[a] === board[b] &&
+          board[b] === board[c]) return board[a];
+    }
+
+    return board.every(Boolean) ? "Draw" : null;
+  }
+
+  function update() {
+    const result = winner();
+    if (result) {
+      ended = true;
+      status.textContent =
+        result === "Draw" ? "It's a draw!" : result + " wins!";
+    } else {
+      status.textContent = turn + "'s turn";
+    }
+  }
+
+  for (let i = 0; i < 9; i++) {
+    const cell = element("button", "", "ttt-cell");
+    cell.onclick = () => {
+      if (ended || board[i]) return;
+      board[i] = turn;
+      cell.textContent = turn;
+
+      if (winner()) update();
+      else {
+        turn = turn === "X" ? "O" : "X";
+        update();
+      }
+    };
+    cells.push(cell);
+    boardEl.appendChild(cell);
+  }
+
+  gameButton(area, "🔄 Restart", () => startTTT(area)).onclick = () => {
+    stopCurrentGame();
+    startTTT(area);
+  };
+}
+
+/* 3. ROCK PAPER SCISSORS */
+function startRPS(area) {
+  const status = message(area, "Choose your move!");
+  const score = message(area, "You: 0 | Computer: 0");
+  let you = 0, computer = 0;
+
+  const moves = ["Rock", "Paper", "Scissors"];
+
+  moves.forEach(move => {
+    gameButton(area, move, () => {
+      const cpu = moves[Math.floor(Math.random() * 3)];
+      let result;
+
+      if (move === cpu) result = "Draw!";
+      else if (
+        (move === "Rock" && cpu === "Scissors") ||
+        (move === "Paper" && cpu === "Rock") ||
+        (move === "Scissors" && cpu === "Paper")
+      ) {
+        result = "You win this round!";
+        you++;
+      } else {
+        result = "Computer wins this round!";
+        computer++;
+      }
+
+      status.textContent = "You chose " + move +
+        " • Computer chose " + cpu + " • " + result;
+
+      score.textContent = "You: " + you + " | Computer: " + computer;
+    });
+  });
+}
+
+/* 4. MEMORY MATCH */
+function startMemory(area) {
+  const status = message(area, "Find all matching pairs!");
+  const board = element("div", undefined, "memory-board");
+  area.appendChild(board);
+
+  const symbols = ["🐱","🐶","🦊","🐼","🐸","🦁","🐵","🐰"];
+  const cards = [...symbols, ...symbols]
+    .sort(() => Math.random() - 0.5);
+
+  let first = null;
+  let locked = false;
+  let matched = 0;
+  let moves = 0;
+  let timeout = null;
+
+  activeCleanup = () => clearTimeout(timeout);
+
+  const cells = cards.map((symbol, index) => {
+    const cell = element("button", "❔", "memory-cell");
+    cell.dataset.index = index;
+    cell.dataset.symbol = symbol;
+
+    cell.onclick = () => {
+      if (locked || cell.dataset.matched || cell === first) return;
+
+      cell.textContent = symbol;
+
+      if (!first) {
+        first = cell;
+        return;
+      }
+
+      moves++;
+
+      if (first.dataset.symbol === symbol) {
+        first.dataset.matched = "yes";
+        cell.dataset.matched = "yes";
+        first = null;
+        matched += 2;
+        status.textContent = "Matches: " + matched / 2 +
+          "/8 • Moves: " + moves;
+
+        if (matched === 16) status.textContent += " • You win!";
+      } else {
+        locked = true;
+        const previous = first;
+        first = null;
+
+        timeout = setTimeout(() => {
+          previous.textContent = "❔";
+          cell.textContent = "❔";
+          locked = false;
+        }, 700);
+
+        status.textContent = "Moves: " + moves;
+      }
+    };
+
+    board.appendChild(cell);
+    return cell;
+  });
+}
+
+/* 5. NUMBER GUESS */
+function startGuess(area) {
+  let target = Math.floor(Math.random() * 100) + 1;
+  let attempts = 0;
+
+  message(area, "Guess a number between 1 and 100.");
+
+  const input = element("input");
+  input.type = "number";
+  input.min = "1";
+  input.max = "100";
+  input.placeholder = "Enter a number";
+  input.setAttribute("aria-label", "Your number");
+  area.appendChild(input);
+
+  const status = message(area, "");
+  const submit = gameButton(area, "Guess!", check);
+  const restart = gameButton(area, "Restart", () => startGuess(area));
+
+  function check() {
+    const n = Number(input.value);
+
+    if (!input.value || !Number.isInteger(n) || n < 1 || n > 100) {
+      status.textContent = "Enter a whole number from 1 to 100.";
+      return;
+    }
+
+    attempts++;
+
+    if (n === target) {
+      status.textContent = "🎉 Correct! Attempts: " + attempts;
+      submit.disabled = true;
+    } else if (n < target) {
+      status.textContent = "Too low! Try a bigger number.";
+    } else {
+      status.textContent = "Too high! Try a smaller number.";
+    }
+  }
+
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") check();
+  });
+
+  restart.onclick = () => {
+    stopCurrentGame();
+    startGuess(area);
+  };
+}
+
+/* 6. CLICK CHALLENGE */
+function startClicker(area) {
+  const status = message(area, "Click Start, then click as fast as you can for 10 seconds!");
+  const score = element("div", "0", "big-number");
+  area.appendChild(score);
+
+  const start = gameButton(area, "▶ Start Challenge", begin);
+  let count = 0;
+  let active = false;
+  let timer = null;
+  let endTime = 0;
+
+  activeCleanup = () => {
+    active = false;
+    clearInterval(timer);
+  };
+
+  const click = gameButton(area, "👆 CLICK!", () => {
+    if (!active) return;
+    count++;
+    score.textContent = count;
+  });
+  click.disabled = true;
+
+  function begin() {
+    clearInterval(timer);
+    count = 0;
+    score.textContent = "0";
+    active = true;
+    click.disabled = false;
+    start.disabled = true;
+    endTime = Date.now() + 10000;
+
+    timer = setInterval(() => {
+      const remaining = Math.max(0, endTime - Date.now());
+      status.textContent = "Time left: " + (remaining / 1000).toFixed(1) + "s";
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        active = false;
+        click.disabled = true;
+        start.disabled = false;
+        status.textContent = "Time's up! You made " + count + " clicks!";
+      }
+    }, 50);
+  }
+}
+
+/* 7. REACTION TEST */
+function startReaction(area) {
+  const status = message(area, "Press Start. Wait for green, then tap as fast as possible.");
+  const display = element("div", "⚡", "big-number");
+  area.appendChild(display);
+
+  const start = gameButton(area, "▶ Start", begin);
+  let phase = "idle";
+  let startTime = 0;
+  let timeout = null;
+
+  const react = gameButton(area, "TAP NOW!", () => {
+    if (phase === "waiting") {
+      clearTimeout(timeout);
+      phase = "idle";
+      display.textContent = "❌";
+      status.textContent = "Too early! Try again.";
+      start.disabled = false;
+    } else if (phase === "ready") {
+      const elapsed = Math.round(performance.now() - startTime);
+      phase = "idle";
+      display.textContent = elapsed + " ms";
+      status.textContent = "Your reaction time: " + elapsed + " ms!";
+      start.disabled = false;
+    }
+  });
+
+  activeCleanup = () => clearTimeout(timeout);
+
+  function begin() {
+    clearTimeout(timeout);
+    phase = "waiting";
+    start.disabled = true;
+    display.textContent = "🔴";
+    status.textContent = "Wait for green...";
+
+    timeout = setTimeout(() => {
+      if (phase !== "waiting") return;
+      phase = "ready";
+      startTime = performance.now();
+      display.textContent = "🟢";
+      status.textContent = "NOW! Tap the button!";
+    }, 1500 + Math.random() * 3000);
+  }
+}
+
+/* Restore preferences */
+const savedTheme = localStorage.getItem("gamerTheme") || "dark";
+document.getElementById("themeSelect").value = savedTheme;
+changeTheme(savedTheme);
+
+const savedAccent = localStorage.getItem("gamerAccent");
+if (savedAccent) {
+  document.getElementById("accentPicker").value = savedAccent;
+  changeAccent(savedAccent);
+}
+
+renderGames();
+</script>
+
+</body>
+  </html>
